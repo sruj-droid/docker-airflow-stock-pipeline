@@ -19,4 +19,3 @@ RUN mkdir -p /opt/airflow/dags /opt/airflow/plugins /opt/airflow/scripts \
     && chown -R airflow: /opt/airflow/dags /opt/airflow/plugins /opt/airflow/scripts
 
 USER airflow
-

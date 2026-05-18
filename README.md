@@ -1,10 +1,10 @@
-# Dockerized Airflow Stock Data Pipeline
+﻿# Dockerized Airflow Stock Data Pipeline
 
 A containerized pipeline that uses **Apache Airflow** to schedule fetches from the **Alpha Vantage** API and load stock quotes into **PostgreSQL**.
 
 ## Overview
 
-An Airflow DAG runs hourly and executes `scripts/fetch_and_store.py`, which calls Alpha Vantage’s `GLOBAL_QUOTE` endpoint for each configured symbol, parses the JSON response, and inserts rows into the `stock_data` table.
+An Airflow DAG runs hourly and executes `scripts/fetch_and_store.py`, which calls Alpha VantageΓÇÖs `GLOBAL_QUOTE` endpoint for each configured symbol, parses the JSON response, and inserts rows into the `stock_data` table.
 
 ## Prerequisites
 
@@ -101,17 +101,17 @@ docker compose up --build -d
 
 ```
 .
-├── dags/
-│   └── fetch_stock_data_dag.py   # Hourly DAG
-├── scripts/
-│   └── fetch_and_store.py        # API fetch + DB insert
-├── initdb/
-│   └── init.sql                  # stock_data table (first DB init only)
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-├── .env.example
-└── .env                          # local only (not in git)
+Γö£ΓöÇΓöÇ dags/
+Γöé   ΓööΓöÇΓöÇ fetch_stock_data_dag.py   # Hourly DAG
+Γö£ΓöÇΓöÇ scripts/
+Γöé   ΓööΓöÇΓöÇ fetch_and_store.py        # API fetch + DB insert
+Γö£ΓöÇΓöÇ initdb/
+Γöé   ΓööΓöÇΓöÇ init.sql                  # stock_data table (first DB init only)
+Γö£ΓöÇΓöÇ Dockerfile
+Γö£ΓöÇΓöÇ docker-compose.yml
+Γö£ΓöÇΓöÇ requirements.txt
+Γö£ΓöÇΓöÇ .env.example
+ΓööΓöÇΓöÇ .env                          # local only (not in git)
 ```
 
 ## Database schema
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS stock_data (
 ## Notes
 
 - Alpha Vantage free tier has strict rate limits (about 5 requests/minute, 500/day). The script sleeps 12 seconds between symbols.
-- If the DAG fails with “API key not set”, confirm `.env` exists and `airflow-scheduler` was restarted after editing it.
+- If the DAG fails with ΓÇ£API key not setΓÇ¥, confirm `.env` exists and `airflow-scheduler` was restarted after editing it.
 - `initdb/init.sql` runs only when the Postgres data volume is first created.
 - Rebuild containers after changing `requirements.txt`, the Dockerfile, or environment variables loaded at build time.
 
