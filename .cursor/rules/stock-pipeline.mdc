@@ -1,0 +1,35 @@
+---
+description: Docker Airflow stock pipeline — architecture and conventions
+alwaysApply: true
+---
+
+# Stock pipeline project
+
+Containerized ETL: Airflow 2.10 (LocalExecutor) + PostgreSQL 15 + Alpha Vantage `GLOBAL_QUOTE`.
+
+## Layout
+
+- `dags/fetch_stock_data_dag.py` — hourly DAG; runs `python /opt/airflow/scripts/fetch_and_store.py` via subprocess
+- `scripts/fetch_and_store.py` — fetch, parse, insert into `stock_data`
+- `initdb/init.sql` — creates `stock_data` on first Postgres boot only
+- `docker-compose.yml` — `postgres`, `airflow-webserver`, `airflow-scheduler`
+
+## Environment
+
+- Secrets and config live in repo-root `.env` (never commit). Use `.env.example` as template.
+- Compose substitutes `${POSTGRES_*}` and `${AIRFLOW_ADMIN_PASSWORD}` from `.env`.
+- `airflow-scheduler` loads `.env` via `env_file`; task subprocess inherits `ALPHA_VANTAGE_API_KEY`, `STOCK_SYMBOLS`, Postgres vars.
+- In containers: `POSTGRES_HOST=postgres`, script path `/opt/airflow/scripts/fetch_and_store.py`.
+
+## Code conventions
+
+- Match existing style: minimal comments, `logging` not print, fail loudly on DB errors.
+- Alpha Vantage free tier: keep `time.sleep(12)` between symbols; do not remove without rate-limit plan.
+- DAG changes: `schedule_interval` cron in DAG file; tickers via `STOCK_SYMBOLS` in `.env`.
+- After `requirements.txt` or Dockerfile changes: `docker compose up --build -d`.
+- Do not add real API keys to repo, DAGs, or rules.
+
+## Common pitfalls
+
+- `init.sql` does not re-run if `postgres_data` volume exists — reset volume to recreate schema.
+- Web UI: `http://localhost:8080`, user `admin`, password from `AIRFLOW_ADMIN_PASSWORD`.

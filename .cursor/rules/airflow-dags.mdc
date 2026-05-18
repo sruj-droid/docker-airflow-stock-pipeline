@@ -1,0 +1,15 @@
+---
+description: Airflow DAG and task patterns for this repo
+globs: dags/**/*.py
+alwaysApply: false
+---
+
+# Airflow DAG patterns
+
+- DAG id: `fetch_stock_data`; single task `fetch_and_store_stock_data`
+- Use `PythonOperator` + `subprocess.run` to invoke the script (not inline fetch logic in the DAG)
+- Keep `catchup=False`, `max_active_runs=1` unless backfill is explicitly requested
+- Log subprocess stdout/stderr; raise `RuntimeError` on non-zero exit code
+- `provide_context=True` is legacy; avoid expanding scope to refactor unless asked
+
+When adding tasks: chain after `fetch_task`; reuse `scripts/` for business logic, not DAG files.
